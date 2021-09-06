@@ -3,6 +3,7 @@ const Account = require("./accounts-model");
 const {
   checkAccountId,
   checkAccountPayload,
+  checkAccountNameUnique,
 } = require("./accounts-middleware");
 
 router.get("/", (req, res, next) => {
@@ -17,11 +18,24 @@ router.get("/:id", checkAccountId, (req, res) => {
   res.json(req.account);
 });
 
-router.post("/", checkAccountPayload, (req, res, next) => {
-  Account.create(req.body)
-    .then((account) => res.status(201).json(account))
-    .catch(next);
-});
+router.post(
+  "/",
+  checkAccountPayload,
+  checkAccountNameUnique,
+  (req, res, next) => {
+    const { name } = req.body;
+    const newAccount = {
+      name: name.trim(),
+      budget: req.body.budget,
+    };
+    Account.create(newAccount)
+      .then((account) => {
+        console.log(account);
+        res.status(201).json(account);
+      })
+      .catch(next);
+  }
+);
 
 router.put("/:id", (req, res, next) => {
   // DO YOUR MAGIC
