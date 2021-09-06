@@ -37,17 +37,33 @@ router.post(
   }
 );
 
-router.put("/:id", (req, res, next) => {
-  // DO YOUR MAGIC
-});
+router.put(
+  "/:id",
+  checkAccountId,
+  checkAccountPayload,
+  checkAccountNameUnique,
+  (req, res, next) => {
+    const { name } = req.body;
+    const newAccount = {
+      name: name.trim(),
+      budget: req.body.budget,
+    };
+    Account.updateById(req.params.id, newAccount)
+      .then((account) => res.status(200).json(account))
+      .catch(next);
+  }
+);
 
-router.delete("/:id", (req, res, next) => {
-  // DO YOUR MAGIC
+router.delete("/:id", checkAccountId, (req, res, next) => {
+  Account.deleteById(req.params.id)
+    .then((account) => {
+      res.json(account);
+    })
+    .catch(next);
 });
 
 router.use((err, req, res, next) => {
   // eslint-disable-line
-  // DO YOUR MAGIC
   res.status(err.status || 500).json({
     custom: `Something is wrong`,
     message: err.message,
