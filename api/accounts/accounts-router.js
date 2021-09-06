@@ -62,8 +62,7 @@ router.delete("/:id", checkAccountId, (req, res, next) => {
     .catch(next);
 });
 
-router.use((err, req, res, next) => {
-  // eslint-disable-line
+/*eslint-disable-line*/ router.use((err, req, res, next) => {
   res.status(err.status || 500).json({
     custom: `Something is wrong`,
     message: err.message,
